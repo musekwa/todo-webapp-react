@@ -12,7 +12,7 @@ export class TodoRow extends Component {
                     <input 
                         type="checkbox" 
                         checked={this.props.item.done }
-                        onChange={this.props.callback(this.props.item)} />
+                        onChange={()=>this.props.callback(this.props.item)} />
                 </td>
             </tr>
         )

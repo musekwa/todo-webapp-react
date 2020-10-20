@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { TodoBanner } from './TodoBanner';
+import { TodoCreator } from './TodoCreator';
 import { TodoRow } from './TodoRow';
 //import logo from './logo.svg';
 //import './App.css';
@@ -16,32 +17,38 @@ export default class App extends Component {
                   {action: "Collect tickets", done: true},
                   {action: "Call Joe", done: false}
                 ],
-      newItemText: "",
+    //  newItemText: "",
     }
     
-    this.updateNewTextValue = this.updateNewTextValue.bind(this);
+   // this.updateNewTextValue = this.updateNewTextValue.bind(this);
     this.createNewTodo = this.createNewTodo.bind(this);
     this.listItems = this.listItems.bind(this);
   }
 
-
+  /*
   updateNewTextValue = (event)=>{
     this.setState({
       newItemText: event.target.value,
     })
   }
-
-  createNewTodo = ()=>{
-    if (!this.state.todoItems.find(item => item.action === this.state.newItemText)){
+  */
+  createNewTodo = (task)=>{
+    if (!this.state.todoItems.find(item => item.action === task)){
       this.setState({
-        todoItems: [...this.state.todoItems, {action: this.state.newItemText, done:false}],
-        newItemText: "",
+        todoItems: [...this.state.todoItems, {action: task, done:false}],
+       // newItemText: "",
       })
     }
   }
 
   listItems(){
     return this.state.todoItems.map(item=>(
+
+      <TodoRow 
+          key={ item.action }
+          item={ item }
+          callback={ this.toggleTodo } />
+      /*
     <tr key={item.action}>
       <td>{item.action}</td>
       <td><input 
@@ -49,14 +56,15 @@ export default class App extends Component {
           checked={item.done}
           onChange={ ()=>this.toggleTodo(item)} /></td>
     </tr>   
+    */
     ));
   }
 
-  toggleTodo(item){
+  toggleTodo(todo){
     return this.setState({
       todoItems: this.state.todoItems.map(
-        it=>it.action === item.action ?
-        {...item, done: !it.done} : it
+        item=>item.action === todo.action ?
+        {...item, done: !item.done} : item
       )
     });
   }
@@ -77,13 +85,17 @@ export default class App extends Component {
             tasks={this.state.todoItems} />
         </h4>
         <div className="container-fluid">
-          <div className="my-1">
+          <TodoCreator 
+              callback={ this.createNewTodo } />
+          {/*
+          <div className="my-2">
             <input className="form-control"
                     value={ this.state.newItemText }
                     onChange={ this.updateNewTextValue } />
             <button className="btn btn-primary mt-1"
                     onClick={ this.createNewTodo }>Add</button>
           </div>
+          */}
         </div>
         <div className="container-fluid">
           <table className="table table-striped table-bordered">
