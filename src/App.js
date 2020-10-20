@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { TodoBanner } from './TodoBanner';
 import { TodoCreator } from './TodoCreator';
 import { TodoRow } from './TodoRow';
+import { VisibilityControl } from './VisibilityControl';
 //import logo from './logo.svg';
 //import './App.css';
 
@@ -17,47 +18,32 @@ export default class App extends Component {
                   {action: "Collect tickets", done: true},
                   {action: "Call Joe", done: false}
                 ],
-    //  newItemText: "",
+      showCompleted: true,
+
     }
     
-   // this.updateNewTextValue = this.updateNewTextValue.bind(this);
     this.createNewTodo = this.createNewTodo.bind(this);
-    this.listItems = this.listItems.bind(this);
   }
 
-  /*
-  updateNewTextValue = (event)=>{
-    this.setState({
-      newItemText: event.target.value,
-    })
-  }
-  */
+
   createNewTodo = (task)=>{
     if (!this.state.todoItems.find(item => item.action === task)){
       this.setState({
         todoItems: [...this.state.todoItems, {action: task, done:false}],
-       // newItemText: "",
       })
     }
   }
 
-  listItems(){
-    return this.state.todoItems.map(item=>(
-
-      <TodoRow 
-          key={ item.action }
-          item={ item }
-          callback={ this.toggleTodo } />
-      /*
-    <tr key={item.action}>
-      <td>{item.action}</td>
-      <td><input 
-          type="checkbox" 
-          checked={item.done}
-          onChange={ ()=>this.toggleTodo(item)} /></td>
-    </tr>   
-    */
-    ));
+  todoTableRows(doneValue){
+    return this.state.todoItems
+          .filter(item=>item.done === doneValue)
+              .map(item =>(
+                <TodoRow 
+                  key={ item.action }
+                  item={ item }
+                  callback={ ()=>this.toggleTodo(item) } 
+                />
+          ));
   }
 
   toggleTodo(todo){
@@ -76,10 +62,6 @@ export default class App extends Component {
     return (
       <div>
         <h4 className={changeStyle}>
-        {/*
-          {this.state.username}'s To Do List
-          ({this.state.todoItems.filter(t=>!t.done).length} items to do)
-         */}
          <TodoBanner 
             name={this.state.username}
             tasks={this.state.todoItems} />
@@ -87,15 +69,6 @@ export default class App extends Component {
         <div className="container-fluid">
           <TodoCreator 
               callback={ this.createNewTodo } />
-          {/*
-          <div className="my-2">
-            <input className="form-control"
-                    value={ this.state.newItemText }
-                    onChange={ this.updateNewTextValue } />
-            <button className="btn btn-primary mt-1"
-                    onClick={ this.createNewTodo }>Add</button>
-          </div>
-          */}
         </div>
         <div className="container-fluid">
           <table className="table table-striped table-bordered">
@@ -106,13 +79,32 @@ export default class App extends Component {
               </tr>
             </thead>
             <tbody>
-              {this.listItems()}
+              {this.todoTableRows(false)}
             </tbody>
           </table>
+          <div className="bg-secondary text-white text-center p-2">
+            <VisibilityControl
+              description="Completed Tasks"
+              isChecked={ this.state.showCompleted }
+              callback={ (checked)=> 
+                          this.setState({ showCompleted: checked })} />
+          </div>
+          { this.state.showCompleted && 
+              <table className="table table-striped table-bordered">
+                <thead>
+                  <tr>
+                    <th scope="col">Description</th>
+                    <th scope="col">Done</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  { this.todoTableRows(true) }
+                </tbody>
+              </table>
+            }
         </div>
       </div>
     );
   }
 }
 
-//export default App;
